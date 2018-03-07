@@ -131,6 +131,8 @@ namespace Simulation
                         {
                             weightChanges[i] = deltaW;
                             neuron.Weight[i] += deltaW;
+                            if (Math.Abs(neuron.Weight[i]) > 1000)
+                                neuron.Weight[i] = 0;// radical : reset extreme weights!
                         }
                     }
                     neuronChanges[neuronNum] = weightChanges;

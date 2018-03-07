@@ -83,9 +83,10 @@ namespace HandwritingRecognition
 
         private void training()
         {
-            float tweakAmount = 0.001F;
+            float tweakAmount = 0.0001F;
             count = 0;
             bool Active = true;
+            bool adjustTweak = true;
 
             while (Active)
             {
@@ -99,15 +100,23 @@ namespace HandwritingRecognition
                 // um zu gucken ob das Netz nicht nur auswendig lernt, sondern auch generalisiert
                 if (count % 1000 == 0) good = 0; //reset statistic every 1000 steps
                 if (expected == outputNum) good++;
-                double accuracy = good / (count%1000+1.0);
-                int percent = (int) (100 * accuracy);
-                Console.Write("accuracy: "+percent+"% cost: "+cost+" \r");
+                double accuracy = good / (count % 1000 + 1.0);
+                int percent = (int)(100 * accuracy);
 
-                this.Invoke(new MethodInvoker(delegate {
-                    this.Refresh();
-                    outputNum_label.Text =outputNum + " accuracy: " + percent+ "%";
-                    //show_output(output); 
-                }));
+                if (count % 100 == 90)
+                {
+                    Console.Write("accuracy: " + percent + "% cost: " + cost + " \r");
+                    if (percent > 50 && adjustTweak)
+                    {
+                        tweakAmount = tweakAmount / 10;
+                        adjustTweak = false;// only once
+                    }
+                }
+                //this.Invoke(new MethodInvoker(delegate {
+                //    this.Refresh();
+                //    outputNum_label.Text =outputNum + " accuracy: " + percent+ "%";
+                //    //show_output(output); 
+                //}));
 
                 count++;
 
